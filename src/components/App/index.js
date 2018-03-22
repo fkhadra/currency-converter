@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { css, media, presets } from 'glamor';
+import { css } from 'glamor';
 import { toast, ToastContainer } from 'react-toastify';
 
 import Calculator from 'src/components/Calculator';
 
 const styles = {
   container: css({
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh'
   })
 };
 

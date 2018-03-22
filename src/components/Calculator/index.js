@@ -11,8 +11,8 @@ import calc from 'src/assets/calculator.svg';
 
 function getLastState() {
   const lastState = localStorage.getItem('lastState');
-  if(lastState !== null) {
-     return JSON.parse(lastState);
+  if (lastState !== null) {
+    return JSON.parse(lastState);
   }
 
   return {
@@ -24,7 +24,7 @@ function getLastState() {
       code: 'EUR',
       value: 1
     }
-  }
+  };
 }
 
 class Calculator extends Component {
@@ -32,25 +32,27 @@ class Calculator extends Component {
     ...getLastState(),
     currencies: [],
     amount: ''
-  };  
+  };
 
   async componentDidMount() {
     this.setState({
       currencies: await currency.list()
     });
   }
-  
+
   componentDidUpdate() {
-    this.saveLastState()
+    this.saveLastState();
   }
 
-  saveLastState(){
-    localStorage.setItem('lastState', JSON.stringify({
-      from: this.state.from,
-      to: this.state.to
-    }));
+  saveLastState() {
+    localStorage.setItem(
+      'lastState',
+      JSON.stringify({
+        from: this.state.from,
+        to: this.state.to
+      })
+    );
   }
-
 
   handleSelect = async ({ target }) => {
     this.setState({
@@ -82,63 +84,69 @@ class Calculator extends Component {
   render() {
     const { from, to, amount, currencies } = this.state;
     return (
-      <Card
-        title={
+      <div>
+        <Card
+          title={
+            <div>
+              <img
+                {...css({ width: '25px' })}
+                src={calc}
+                alt="Currency converter"
+              />{' '}
+              Currency converter
+            </div>
+          }
+        >
           <div>
-            <img
-              {...css({ width: '25px' })}
-              src={calc}
-              alt="Currency converter"
-            />{' '}
-            Currency converter
+            <label
+              htmlFor="amount"
+              {...css({
+                '& input': {
+                  borderColor: '#9b4dca'
+                }
+              })}
+            >
+              Amount:
+              <input
+                type="number"
+                placeholder="Amount"
+                value={amount}
+                onChange={this.onAmountChange}
+              />
+            </label>
           </div>
-        }
-      >
-        <div>
-          <label
-            htmlFor="amount"
+          <div>
+            <CurrencySelector
+              name="from"
+              onChange={this.handleSelect}
+              selected={from.code}
+              currencies={currencies}
+            />
+            <CurrencySwapper onSwapCurrencies={this.onSwapCurrencies} />
+            <CurrencySelector
+              name="to"
+              onChange={this.handleSelect}
+              selected={to.code}
+              currencies={currencies}
+            />
+          </div>
+          <div
             {...css({
-              '& input': {
-                borderColor: '#9b4dca'
-              }
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '8px'
             })}
           >
-            Amount:
-            <input
-              type="number"
-              placeholder="Amount"
-              value={amount}
-              onChange={this.onAmountChange}
-            />
-          </label>
-        </div>
-        <div>
-          <CurrencySelector
-            name="from"
-            onChange={this.handleSelect}
-            selected={from.code}
-            currencies={currencies}
-          />
-          <CurrencySwapper onSwapCurrencies={this.onSwapCurrencies} />
-          <CurrencySelector
-            name="to"
-            onChange={this.handleSelect}
-            selected={to.code}
-            currencies={currencies}
-          />
-        </div>
-        <div
-          {...css({ display: 'flex', justifyContent: 'center', margin: '8px' })}
-        >
-          {`${this.formatToCurrency(
-            amount,
-            from.code
-          )} = ${this.formatToCurrency(
-            amount * (to.value / from.value),
-            to.code
-          )}`}
-        </div>
-      </Card>
+            {`${this.formatToCurrency(
+              amount,
+              from.code
+            )} = ${this.formatToCurrency(
+              amount * (to.value / from.value),
+              to.code
+            )}`}
+          </div>
+        </Card>
+      </div>
     );
   }
 }
