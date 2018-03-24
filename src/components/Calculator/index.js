@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { css } from 'glamor';
+import { Motion, spring } from 'react-motion';
 
 import CurrencySelector from './CurrencySelector';
 import CurrencySwapper from './CurrencySwapper';
@@ -83,6 +84,9 @@ class Calculator extends Component {
 
   render() {
     const { from, to, amount, currencies } = this.state;
+    const request = this.formatToCurrency(amount, from.code);
+    const response = amount * (to.value / from.value);
+
     return (
       <div>
         <Card
@@ -137,13 +141,13 @@ class Calculator extends Component {
               margin: '8px'
             })}
           >
-            {`${this.formatToCurrency(
-              amount,
-              from.code
-            )} = ${this.formatToCurrency(
-              amount * (to.value / from.value),
-              to.code
-            )}`}
+            {request}
+            <i> = </i>
+            <Motion defaultStyle={{ x: 0 }} style={{ x: spring(response) }}>
+              {value => (
+                <React.Fragment>{this.formatToCurrency(value.x.toFixed(2), to.code)}</React.Fragment>
+              )}
+            </Motion>
           </div>
         </Card>
       </div>
